@@ -1,0 +1,4 @@
+big_elibre:
+    resource: "@BigElibreBundle/Resources/config/routing.yml"
+    prefix:   /
+

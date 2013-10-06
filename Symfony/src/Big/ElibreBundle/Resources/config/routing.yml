@@ -1,0 +1,10 @@
+big_elibre_homepage:
+    pattern:  /
+    defaults: { _controller: BigElibreBundle:Default:index }
+
+big_elibre_theme:
+    pattern:  /{theme}/{action}
+    defaults: { _controller: BigElibreBundle:Default:theme, action: view, theme: defaultTheme }
+    requirements:
+        action: view|edit
+   

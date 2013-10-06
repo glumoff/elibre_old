@@ -1,0 +1,7 @@
+parameters:
+#    big_elibre.example.class: Big\ElibreBundle\Example
+
+services:
+#    big_elibre.example:
+#        class: %big_elibre.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
