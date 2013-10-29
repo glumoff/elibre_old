@@ -12,7 +12,7 @@ class DBManager {
     var $user;
     var $pwd;
     var $db;
-    var $charset;
+    var $charset = 'utf8';
 
     function __construct($host, $user, $pwd, $db) {
 
@@ -76,7 +76,7 @@ class DBManager {
             /* Close connection */
             mysql_close($db_connect);
         } else {
-            ve(\mysql_error());
+            echo \mysql_error();
         }
 
         return $res;

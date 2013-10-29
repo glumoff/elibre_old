@@ -3,8 +3,14 @@ big_elibre_homepage:
     defaults: { _controller: BigElibreBundle:Default:index }
 
 big_elibre_theme:
-    pattern:  /{theme}/{action}
-    defaults: { _controller: BigElibreBundle:Default:theme, action: view, theme: defaultTheme }
+    pattern:  /theme/{theme_code}/{action}
+    defaults: { _controller: BigElibreBundle:Theme:showTheme, action: view}
     requirements:
         action: view|edit
-   
+      
+big_elibre_doc:
+    pattern:  /doc/{doc_id}/{action}
+    defaults: { _controller: BigElibreBundle:Document:showDoc, action: view }
+    requirements:
+        action: view|download|edit
+      

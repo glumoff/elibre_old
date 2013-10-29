@@ -11,6 +11,7 @@ namespace Big\ElibreBundle\Model;
 class ThemesTree {
 
   private $themes_arr;
+  private $maxDepthLevel = NULL;
 
   public function __construct($arr = NULL) {
     if (isset($arr))
@@ -23,50 +24,119 @@ class ThemesTree {
     return $this->themes_arr;
   }
 
+  public function setMaxLevel($level) {
+    $this->maxDepthLevel = $level;
+  }
+
   /**
    * 
    * @param Theme $theme
    */
   public function addTheme($theme) {
-    $this->themes_arr[$theme->getCode()] = $theme;
+    $this->themes_arr[$theme->getID()] = $theme;
   }
 
   public function buildFromArray($arr) {
     $this->themes_arr = $this->parseArray($arr);
+//    echo "----------------------<br>";
   }
 
-  private function parseArray($arr, $root = NULL) {
+  private function parseArray($arr, $root = NULL, $level = NULL) {
 //    echo 'ROOT: ' . $root . '<br>';
     $res = NULL;
+    if (($this->maxDepthLevel !== NULL) && ($level >= $this->maxDepthLevel)) {
+      return $res;
+    }
     if (is_array($arr)) {
       foreach ($arr as $k => $v) {
         $t = new Theme();
-        $t->setCode($v['id']);
+        $t->setID($v['id']);
+        $t->setCode($v['code']);
         $t->setTitle($v['title']);
+        $t->setDescription($v['descr']);
+        $t->setParentID($v['parent_id']);
+        $t->setDocsCount($v['docsCount']);
         if ($v['parent_id'] == $root) {
           unset($arr[$k]);
 //          echo $k . ': ' . $v['title'] . "; parent: " . var_export($v['parent_id'], TRUE) . '<br>';
           $res[] = $t;
 //          $tl = new ThemesTree();
-          $res[count($res) - 1]->setChildren(new ThemesTree($this->parseArray(&$arr, $v['id'])));
+          $res[count($res) - 1]->setChildren(new ThemesTree($this->parseArray(&$arr, $v['id'], $level + 1)));
         }
       }
     }
     return $res;
   }
 
+  /**
+   * 
+   * @param string $code
+   * @return Theme
+   */
   public function getTheme($code) {
     $res = NULL;
-    foreach ($this->themes_arr as $t) {
-      if ($t->code == $code) {
-        $res = NULL;
-        break;
-      }
-      elseif ($t->children) {
-        $res = $t->children->getTheme();
+//    echo '<pre>' . var_export($this->themes_arr, true) . '</pre>';
+    if (is_array($this->themes_arr)) {
+      /** Theme $t */
+      foreach ($this->themes_arr as $t) {
+        if ($res)
+          break;
+        if ($t->getCode() == $code) {
+          return $t;
+        }
+        elseif ($t->getChildren()) {
+          $res = $t->getChildren()->getTheme($code);
+        }
       }
     }
     return $res;
   }
 
+  /**
+   * 
+   * @param int $id
+   * @return Theme
+   */
+  public function getThemeByID($id) {
+    $res = NULL;
+    if (is_array($this->themes_arr)) {
+      /** Theme $t */
+      foreach ($this->themes_arr as $t) {
+        if ($res)
+          break;
+        if ($t->getID() == $id) {
+          return $t;
+        }
+        elseif ($t->getChildren()) {
+          $res = $t->getChildren()->getThemeByID($id);
+        }
+      }
+      return $res;
+    }
+  }
+
+  /**
+   * 
+   * @param string $code
+   * @return Theme
+   */
+  public function getThemePath($code) {
+    $pathArr = array();
+    $t = $this->getTheme($code);
+    if ($t) {
+      if (is_array($this->themes_arr)) {
+        do {
+          /** Theme $parent */
+          $parent = $this->getThemeByID($t->getParentID());
+          if ($parent) {
+            $t = $parent;
+            $pathArr[] = $t;
+          }
+        } while ($parent !== NULL);
+      }
+    }
+    return $pathArr;
+  }
+
 }
+

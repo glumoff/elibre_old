@@ -10,11 +10,18 @@ namespace Big\ElibreBundle\Model;
 
 class Theme {
 
-  private $code;
+  private $id;
   private $title;
   private $description;
-  private $parentCode;
+  private $parentID;
   private $children;
+  private $code;
+  //private $subthemesCount;
+  private $docsCount;
+
+  public function getID() {
+    return $this->id;
+  }
 
   public function getCode() {
     return $this->code;
@@ -28,16 +35,24 @@ class Theme {
     return $this->description;
   }
 
-  public function getParentCode() {
-    return $this->parentCode;
+  public function getParentID() {
+    return $this->parentID;
   }
 
   public function getChildren() {
     return $this->children;
   }
 
+  public function getDocsCount() {
+    return $this->docsCount;
+  }
+
   public function setCode($code) {
     $this->code = $code;
+  }
+
+  public function setID($id) {
+    $this->id = $id;
   }
 
   public function setTitle($title) {
@@ -51,5 +66,14 @@ class Theme {
   public function setChildren($children) {
     $this->children = $children;
   }
+  
+  public function setParentID($id) {
+    $this->parentID = $id;
+  }
 
+  public function setDocsCount($cnt) {
+    $this->docsCount = $cnt;
+  }
+
+  
 }

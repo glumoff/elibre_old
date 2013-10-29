@@ -1,14 +1,31 @@
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<script>
-  $(function() {
-  $( "#accordion" ).accordion();
-  });
-</script>
-Action: {{ action }} <br>
-Theme: {{ theme }}
+{% extends 'BigElibreBundle:Default:index.html.twig' %}
 
-<div id="accordion" style="width: 250px;">
-  {% include "BigElibreBundle:Default:nav_menu.html.twig" with {'themes': themes} only %}
-</div>
+{% block content %}
+
+<h3 class="themeTitle">Тема: {{ selectedTheme.getTitle() }}</h3>
+
+<ul class="themesList">
+  {% for cur_theme in subthemes %}
+        <li>
+            <a href="{{ path('big_elibre_theme', {'theme_code': cur_theme.code,  'action' : 'view' }) }}" >
+                <img src="{{ asset('bundles/bigelibre/images/icons/folder3.png') }}" class="icon"> {{ cur_theme.title }}
+            </a>
+        </li>
+  {% endfor %}
+    </ul>
+    <ul class="docList">
+  {% for doc in documents %}
+            <li><a href="{{ path('big_elibre_doc', {'doc_id': doc.id,  'action' : 'view' }) }}" title="{{ attribute(doc, 'title') }}{% if doc.annotation %}<p>Аннотация: {{ attribute(doc, 'annotation') }}</p>{% endif %}">
+    {# {% if doc.icon %}
+                            <img src="{{ asset('bundles/bigelibre/images/icons/') }}{{ doc.icon }}" class="icon">
+    {% endif %} #}
+                            {{ attribute(doc, 'title') }}
+                        </a>
+                        <a class="download" href="{{ path('big_elibre_doc', {'doc_id': doc.id,  'action' : 'download' }) }}" title="Скачать документ"><img src="{{ asset('bundles/bigelibre/images/icons/') }}{{ doc.icon }}"></a>
+                    </li>
+  {% else %}
+                    нет документов
+  {% endfor %}
+                </ul>
+
+{% endblock %}

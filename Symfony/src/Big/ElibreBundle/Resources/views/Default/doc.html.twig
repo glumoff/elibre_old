@@ -1,0 +1,22 @@
+{% extends 'BigElibreBundle:Default:index.html.twig' %}
+
+{% block content %}
+ {% if doc %}
+<div class="docTitle">{{ attribute(doc, 'title') }}</div>
+<a class="download" href="{{ path('big_elibre_doc', {'doc_id': doc.id,  'action' : 'download' }) }}" title="Скачать документ">  {% if doc.icon %}  
+  <img src="{{ asset('bundles/bigelibre/images/icons/') }}{{ doc.icon }}" class="icon big">
+   {% else %}
+  <img src="{{ asset('bundles/bigelibre/images/down.png') }}" class="big">
+     {% endif %}
+</a>
+
+
+<div class="docAnnotation">
+  {#<h3>Аннотация:</h3>#}
+  <p>
+      {{ attribute(doc, 'annotation')|escape('html')|replace({'\n': "<p>"})|raw }}
+    </p>
+  </div>
+
+              {% endif %}
+{% endblock %}
