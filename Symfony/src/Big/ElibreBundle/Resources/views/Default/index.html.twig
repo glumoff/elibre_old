@@ -9,7 +9,7 @@
     <script src="{{ asset('bundles/bigelibre/js/func.js') }}"></script>
 
     <title>
-      Электронная библиотека | Николаевский центр подготовки плавсостава
+      {% if is_granted('ROLE_ADMIN') %}Logged {% endif %}Электронная библиотека | Николаевский центр подготовки плавсостава
     </title>
   </head>
   <body>
@@ -19,7 +19,7 @@
         <div id="header">
           <div id="headerTitle"><a href="{{ path('big_elibre_homepage') }}">Электронная<br>библиотека</a></div>
           <div id="headerLinks" class="fulljustify">
-            <a href="{{ path('big_elibre_homepage') }}">Главная</a> | Вход | Поиск | Контакты
+            <a href="{{ path('big_elibre_homepage') }}">Главная</a> | <a href="{{ path('login') }}">Вход</a> | Поиск | Контакты
           </div>
           <img class="headerImage" src="{{ asset('bundles/bigelibre/images/header.jpg') }}">
         </div><!-- #header-->

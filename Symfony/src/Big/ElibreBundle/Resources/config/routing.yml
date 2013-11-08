@@ -13,4 +13,10 @@ big_elibre_doc:
     defaults: { _controller: BigElibreBundle:Document:showDoc, action: view }
     requirements:
         action: view|download|edit
-      
+
+login:
+    pattern:  /login
+    defaults: { _controller: BigElibreBundle:Security:login}
+    
+login_check:
+    pattern:  /login_check

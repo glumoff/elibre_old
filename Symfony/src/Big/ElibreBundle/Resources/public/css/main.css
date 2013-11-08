@@ -343,3 +343,36 @@ p:before {
 p.tooltip {
   text-align: justify;
 }
+
+
+/* LOGIN */
+
+#LoginFormContainer {
+  /*margin: auto;*/
+  /*border: 1px dashed red;*/
+  /*position: relative;*/
+  /*text-align: center;*/
+}
+
+#LoginFormContainer table {
+  margin: auto;
+  /*border: 1px dashed greenyellow;*/
+  /*position: absolute;*/
+  width: fit-content;
+  /*overflow: hidden;*/
+}
+
+#LoginFormContainer td.SubmitButtons {
+  /*position: absolute;*/
+  /*margin-right: 0;*/
+  /*border: 1px dashed firebrick;*/
+  /*float: right;*/
+  text-align: right;
+}
+
+.errorMessage {
+  text-align: center;
+  color: red;
+  margin-bottom: 15px;
+  margin-top: 15px;
+}
