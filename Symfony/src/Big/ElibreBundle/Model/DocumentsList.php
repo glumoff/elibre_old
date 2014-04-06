@@ -2,6 +2,8 @@
 
 namespace Big\ElibreBundle\Model;
 
+use Big\ElibreBundle\Entity\Document;
+
 /**
  * Description of DocumentsList
  *

@@ -19,3 +19,10 @@ function nl2br(str, is_xhtml) {
 
     return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
 }
+
+if(!Array.prototype.last) {
+//  alert('last');
+    Array.prototype.last = function() {
+        return this[this.length - 1];
+    };
+}

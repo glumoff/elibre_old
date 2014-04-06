@@ -10,6 +10,10 @@
                 <source>Registration</source>
                 <target>Реєстрація</target>
             </trans-unit>
+            <trans-unit id="3">
+                <source>error.404</source>
+                <target>Сторінку не знайдено</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

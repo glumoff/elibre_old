@@ -1,101 +1,142 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
   <head>
-    <link href="{{ asset('bundles/bigelibre/css/reset.css') }}" rel="stylesheet" />
+{#    <link href="{{ asset('bundles/bigelibre/css/reset.css') }}" rel="stylesheet" />#}
     <link href="{{ asset('bundles/bigelibre/css/elibre/jquery-ui-1.10.3.custom.css') }}" rel="stylesheet" />
     <link href="{{ asset('bundles/bigelibre/css/main.css') }}" rel="stylesheet" />
     <script src="{{ asset('bundles/bigelibre/js/jquery-1.9.1.js') }}"></script>
     <script src="{{ asset('bundles/bigelibre/js/jquery-ui-1.10.3.custom.min.js') }}"></script>
+    <script src="{{ asset('bundles/bigelibre/js/jquery.custombox.js') }}"></script>
     <script src="{{ asset('bundles/bigelibre/js/func.js') }}"></script>
-
     <title>
-      {% if is_granted('ROLE_ADMIN') %}Logged {% endif %}Электронная библиотека | Николаевский центр подготовки плавсостава
+      Электронная библиотека | Николаевский центр подготовки плавсостава
     </title>
   </head>
   <body>
 
     <div id="wrapper">
       {% block header %}
-        <div id="header">
-          <div id="headerTitle"><a href="{{ path('big_elibre_homepage') }}">Электронная<br>библиотека</a></div>
-          <div id="headerLinks" class="fulljustify">
-            <a href="{{ path('big_elibre_homepage') }}">Главная</a> | <a href="{{ path('login') }}">Вход</a> | Поиск | Контакты
-          </div>
-          <img class="headerImage" src="{{ asset('bundles/bigelibre/images/header.jpg') }}">
-        </div><!-- #header-->
+      <div id="header">
+        <div id="headerTitle"><a href="{{ path('big_elibre_page') }}">Электронная<br>библиотека</a></div>
+        <div id="headerLinks" class="fulljustify">
+          <a href="{{ path('big_elibre_page') }}">Главная</a> | <a href="{{ path('login') }}">Вход</a> | Поиск | <a href="{{ path('big_elibre_page', {'page': 'contacts'}) }}">Контакты</a>
+
+          {% if is_granted('ROLE_ADMIN') %}
+          | <a href="{{ path('big_elibre_admin') }}">Админ</a>
+          {% endif %}
+        </div>
+        <img class="headerImage" src="{{ asset('bundles/bigelibre/images/header.jpg') }}">
+      </div><!-- #header-->
       {% endblock %}
 
-        <div id="middle">
+      <div id="middle">
 
-          <div id="container">
-            <div id="content">
-      {% block content %}
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor. Praesent et diam eget libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut porta lorem lacinia consectetur. Donec ut libero sed arcu vehicula ultricies a non tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut gravida lorem. Ut turpis felis, pulvinar a semper sed, adipiscing id dolor. Pellentesque auctor nisi id magna consequat sagittis. Curabitur dapibus enim sit amet elit pharetra tincidunt feugiat nisl imperdiet. Ut convallis libero in urna ultrices accumsan. Donec sed odio eros. Donec viverra mi quis quam pulvinar at malesuada arcu rhoncus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In rutrum accumsan ultricies. Mauris vitae nisi at sem facilisis semper ac in est.</p>
-                <p>Vivamus fermentum semper porta. Nunc diam velit, adipiscing ut tristique vitae, sagittis vel odio. Maecenas convallis ullamcorper ultricies. Curabitur ornare, ligula semper consectetur sagittis, nisi diam iaculis velit, id fringilla sem nunc vel mi. Nam dictum, odio nec pretium volutpat, arcu ante placerat erat, non tristique elit urna et turpis. Quisque mi metus, ornare sit amet fermentum et, tincidunt et orci. Fusce eget orci a orci congue vestibulum. Ut dolor diam, elementum et vestibulum eu, porttitor vel elit. Curabitur venenatis pulvinar tellus gravida ornare. Sed et erat faucibus nunc euismod ultricies ut id justo. Nullam cursus suscipit nisi, et ultrices justo sodales nec. Fusce venenatis facilisis lectus ac semper. Aliquam at massa ipsum. Quisque bibendum purus convallis nulla ultrices ultricies. Nullam aliquam, mi eu aliquam tincidunt, purus velit laoreet tortor, viverra pretium nisi quam vitae mi. Fusce vel volutpat elit. Nam sagittis nisi dui.</p>
-                <p>Suspendisse lectus leo, consectetur in tempor sit amet, placerat quis neque. Etiam luctus porttitor lorem, sed suscipit est rutrum non. Curabitur lobortis nisl a enim congue semper. Aenean commodo ultrices imperdiet. Vestibulum ut justo vel sapien venenatis tincidunt. Phasellus eget dolor sit amet ipsum dapibus condimentum vitae quis lectus. Aliquam ut massa in turpis dapibus convallis. Praesent elit lacus, vestibulum at malesuada et, ornare et est. Ut augue nunc, sodales ut euismod non, adipiscing vitae orci. Mauris ut placerat justo. Mauris in ultricies enim. Quisque nec est eleifend nulla ultrices egestas quis ut quam. Donec sollicitudin lectus a mauris pulvinar id aliquam urna cursus. Cras quis ligula sem, vel elementum mi. Phasellus non ullamcorper urna.</p>
-                <p>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. In euismod ultrices facilisis. Vestibulum porta sapien adipiscing augue congue id pretium lectus molestie. Proin quis dictum nisl. Morbi id quam sapien, sed vestibulum sem. Duis elementum rutrum mauris sed convallis. Proin vestibulum magna mi. Aenean tristique hendrerit magna, ac facilisis nulla hendrerit ut. Sed non tortor sodales quam auctor elementum. Donec hendrerit nunc eget elit pharetra pulvinar. Suspendisse id tempus tortor. Aenean luctus, elit commodo laoreet commodo, justo nisi consequat massa, sed vulputate quam urna quis eros. Donec vel. </p>
+        <div id="container">
+          <div id="content">
+      {% block content %} 
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="toolBox">
+              <div class="editBtn">
+                <a href="{{ path('big_elibre_page', {'page': page, 'action': 'edit'}) }}" alt="{% trans from "messages" %}Edit this page{% endtrans %}" title="{% trans from "messages" %}Edit this page{% endtrans %}">{% trans from "messages" %}Edit{% endtrans %}</a>
+              </div>
+            </div>
+        {% endif %}
+
+        {{ content|raw }}
       {% endblock %}
-              </div><!-- #content-->
-            </div><!-- #container-->
+          </div><!-- #content-->
+        </div><!-- #container-->
 
       {% block navigation %}
-            <script>
-              $(function() {
-                $(document).tooltip({
-                  content: function() {
-                    var element = $(this);
-                    /*alert(nl2br(element.attr('title')));*/
-                    //if (element.hasClass(''))
-                    return '<div class="tooltip">' + element.attr('title') + '</div>';
-                  }
-                });
+        <script>
+          $(function() {
+            $(document).tooltip({
+              content: function() {
+                var element = $(this);
+                /*alert(nl2br(element.attr('title')));*/
+                //if (element.hasClass(''))
+                return '<div class="tooltip">' + element.attr('title') + '</div>';
+              }
+            });
 
-                var ind = $("#menuSidebar > h3").index($("#menuSidebar > h3.active"));
-                //alert
-                $("#menuSidebar").accordion(
-                        {collapsible: true,
-                          active: (ind >= 0) ? ind : false,
-                          heightStyle: "content",
-                          /*header: "> li > :first-child, > :not(li):even"*/
-                          header: "> h3"
-                        });
-                //if (ind >= 0) {
-                //  $("#menuSidebar").accordion("option", "active", ind);
-                //}
-                var plainLinks = $("#menuSidebar > a");
-                plainLinks.addClass("ui-accordion-header ui-state-default ui-corner-all");
-                plainLinks.hover(function() {
-                  $(this).addClass("ui-state-hover");
-                }, function() {
-                  $(this).removeClass("ui-state-hover");
-                });
-                //alert(ind);
+            var ind = $("#menuSidebar > h3").index($("#menuSidebar > h3.active"));
+            //alert
+            $("#menuSidebar").accordion(
+                    {collapsible: true,
+                      active: (ind >= 0) ? ind : false,
+                      heightStyle: "content",
+                      /*header: "> li > :first-child, > :not(li):even"*/
+                      header: "> h3"
+                    });
+            //if (ind >= 0) {
+            //  $("#menuSidebar").accordion("option", "active", ind);
+            //}
+            var plainLinks = $("#menuSidebar > a");
+            plainLinks.addClass("ui-accordion-header ui-state-default ui-corner-all");
+            plainLinks.hover(function() {
+              $(this).addClass("ui-state-hover");
+            }, function() {
+              $(this).removeClass("ui-state-hover");
+            });
+            //alert(ind);
+
+
+{#            $('#editMenuOrder').on('click', function(e) {
+              $.fn.custombox(this, {
+                effect: 'fadein',
+                overlayClose: false
               });
-              </script>
+              e.preventDefault();
+            });#}
 
-              <div class="sidebar" id="menuSidebar">
+          });
+        </script>
+
+        <div class="sidebar" id="menuSidebar">
                   {% include "BigElibreBundle:Default:nav_menu.html.twig" with {'menuThemes': menuThemes, 'activeThemeRoot': activeThemeRoot, 'activeThemeRoot2': activeThemeRoot2} only %}
-                </div>
+        </div>
+
+{#        {% if is_granted('ROLE_ADMIN') %}
+        <div class="menuToolBox">
+          <div class="orderBtn">
+            <a href="{{ path('big_elibre_admin', {'mode': 'themes',  'action' : 'view' } ) }}" id="editMenuOrder" alt="{% trans from "messages" %}Change menu items order{% endtrans %}" title="{% trans from "messages" %}Change menu items order{% endtrans %}">{% trans from "messages" %}Order{% endtrans %}</a>
+          </div>
+        </div>
+
+        <div id="editMenuOrderWindow" class="modalWindow hidden">
+          <div class="modalWindowHeader">
+            Header
+          </div>
+          <div class="modalWindowContent">
+            А вот тут будет редактор меню<br>
+
+          </div>
+        </div>
+
+        <script src="{{ asset('bundles/bigelibre/js/jquery.custombox.js') }}"></script>
+        <link rel="stylesheet" href="{{ asset('bundles/bigelibre/css/jquery.custombox.css') }}"/>
+        {% endif %}
+#}
       {% endblock %}
 
       {% block news %}
-                <!--
-                <div class="sidebar" id="sideRight">
-                  <strong>Right Sidebar:</strong> Integer velit. Vestibulum nisi nunc, accumsan ut, vehicula sit amet, porta a, mi. Nam nisl tellus, placerat eget, posuere eget, egestas eget, dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In elementum urna a eros. Integer iaculis. Maecenas vel elit.
-                </div><!-- .sidebar#sideRight -->
+        <!--
+        <div class="sidebar" id="sideRight">
+          <strong>Right Sidebar:</strong> Integer velit. Vestibulum nisi nunc, accumsan ut, vehicula sit amet, porta a, mi. Nam nisl tellus, placerat eget, posuere eget, egestas eget, dui. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In elementum urna a eros. Integer iaculis. Maecenas vel elit.
+        </div><!-- .sidebar#sideRight -->
       {% endblock %}
 
-              </div><!-- #middle-->
+      </div><!-- #middle-->
 
-            </div><!-- #wrapper -->
+    </div><!-- #wrapper -->
 
       {% block footer %}
-            <div id="footer">
-              <div id="footerLinks">
-                &copy;2013 Николаевский центр подготовки плавсостава<span id="footerSeparator"></span> <a href="{{ path('big_elibre_homepage') }}">Электронная библиотека</a> | Вход | Поиск | Контакты
-              </div>
+    <div id="footer">
+      <div id="footerLinks">
+        &copy;2013 Николаевский центр подготовки плавсостава<span id="footerSeparator"></span> <a href="{{ path('big_elibre_page') }}">Электронная библиотека</a> | Вход | Поиск | Контакты
+      </div>
 
-            </div><!-- #footer -->
+    </div><!-- #footer -->
       {% endblock %}
-          </body>
-        </html>
+  </body>
+</html>

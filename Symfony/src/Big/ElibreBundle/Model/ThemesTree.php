@@ -30,7 +30,7 @@ class ThemesTree {
 
   /**
    * 
-   * @param Theme $theme
+   * @param ThemeC $theme
    */
   public function addTheme($theme) {
     $this->themes_arr[$theme->getID()] = $theme;
@@ -41,15 +41,17 @@ class ThemesTree {
 //    echo "----------------------<br>";
   }
 
-  private function parseArray($arr, $root = NULL, $level = NULL) {
-//    echo 'ROOT: ' . $root . '<br>';
+  private function parseArray($arr, $root = 0, $level = NULL) {
+//    echo 'ROOT1: ' . $root . '<br>';
     $res = NULL;
     if (($this->maxDepthLevel !== NULL) && ($level >= $this->maxDepthLevel)) {
       return $res;
     }
+//    echo 'ROOT2: ' . $root . '<br>';
     if (is_array($arr)) {
+//    echo 'ROOT3: ' . $arr . '<br>';
       foreach ($arr as $k => $v) {
-        $t = new Theme();
+        $t = new ThemeC();
         $t->setID($v['id']);
         $t->setCode($v['code']);
         $t->setTitle($v['title']);
@@ -71,7 +73,7 @@ class ThemesTree {
   /**
    * 
    * @param string $code
-   * @return Theme
+   * @return ThemeC
    */
   public function getTheme($code) {
     $res = NULL;
@@ -95,7 +97,7 @@ class ThemesTree {
   /**
    * 
    * @param int $id
-   * @return Theme
+   * @return ThemeC
    */
   public function getThemeByID($id) {
     $res = NULL;
@@ -118,7 +120,7 @@ class ThemesTree {
   /**
    * 
    * @param string $code
-   * @return Theme
+   * @return ThemeC
    */
   public function getThemePath($code) {
     $pathArr = array();

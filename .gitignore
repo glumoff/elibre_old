@@ -1,1 +1,4 @@
+/Symfony/web/bundles/bigelibre_/
 /nbproject/
+/Symfony/app/cache/dev/
+/Symfony/app/cache/prod/

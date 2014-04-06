@@ -1,17 +1,24 @@
 security:
     encoders:
         Symfony\Component\Security\Core\User\User: plaintext
+        Big\ElibreBundle\Entity\User: plaintext
 
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER
         ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     providers:
+        chain_provider:
+          chain:
+            providers: [in_memory, user_db]
+      
         in_memory:
             memory:
                 users:
-                    user:  { password: userpass, roles: [ 'ROLE_USER' ] }
+                    #user:  { password: userpass, roles: [ 'ROLE_USER' ] }
                     admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
+        user_db:
+            entity: { class: Big\ElibreBundle\Entity\User, property: username }
 
     firewalls:
         dev:
@@ -36,4 +43,5 @@ security:
 
     access_control:
 #        - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/secured/, roles: ROLE_ADMIN }
+        - { path: ^/.*/download$, roles: ROLE_USER }
+        - { path: ^/adm/.*$, roles: ROLE_ADMIN }

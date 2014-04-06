@@ -18,6 +18,10 @@ class SecurityController extends DefaultController {
     return $this->render('BigElibreBundle:Default:login.html.twig', $this->getTemplateParams());
   }
 
+  public function registerAction() {
+    return $this->render('BigElibreBundle:Default:register.html.twig', $this->getTemplateParams());
+  }
+
   protected function getTemplateParams() {
     parent::getTemplateParams();
 

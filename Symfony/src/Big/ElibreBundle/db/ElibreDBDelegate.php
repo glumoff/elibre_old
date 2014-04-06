@@ -10,8 +10,8 @@ namespace Big\ElibreBundle\db;
 
 use Big\ElibreBundle\db\DBDelegateA;
 use Big\ElibreBundle\Model\ThemesTree;
-use Big\ElibreBundle\Model\Theme;
-use Big\ElibreBundle\Model\Document;
+use Big\ElibreBundle\Model\ThemeC;
+use Big\ElibreBundle\Entity\Document;
 use Big\ElibreBundle\Model\DocumentsList;
 
 class ElibreDBDelegate extends DBDelegateA {
@@ -27,7 +27,8 @@ class ElibreDBDelegate extends DBDelegateA {
                        FROM documents
                        WHERE documents.theme_id = themes.id) AS docsCount
               FROM themes
-              ORDER BY parent_id, id';
+              WHERE is_active=1
+              ORDER BY parent_id, show_order, id';
     $dbm = $this->getDBM();
     $res = $dbm->selectQuery($query);
     $tl = new ThemesTree();
@@ -44,13 +45,15 @@ class ElibreDBDelegate extends DBDelegateA {
               INNER JOIN themes t2
                       ON t2.parent_id = t1.id
               WHERE t1.code = '" . $themeCode . "'
+                 AND t2.is_active=1
               ORDER BY title, code";
+//    echo $query;
     $dbm = $this->getDBM();
     $res = $dbm->selectQuery($query, FALSE);
     $tl = new ThemesTree();
     if ($res && (is_array($res))) {
       foreach ($res as $v) {
-        $t = new Theme();
+        $t = new ThemeC();
         $t->setID($v['id']);
         $t->setCode($v['code']);
         $t->setTitle($v['title']);
@@ -71,7 +74,7 @@ class ElibreDBDelegate extends DBDelegateA {
     $dbm = $this->getDBM();
     $res = $dbm->selectQuery($query);
     if ($res) {
-      $t = new Theme();
+      $t = new ThemeC();
       $t->setID($res['id']);
       $t->setCode($res['code']);
       $t->setTitle($res['title']);
@@ -91,7 +94,7 @@ class ElibreDBDelegate extends DBDelegateA {
     $dbm = $this->getDBM();
     $res = $dbm->selectQuery($query);
     if ($res) {
-      $t = new Theme();
+      $t = new ThemeC();
       $t->setID($res['id']);
       $t->setCode($res['code']);
       $t->setTitle($res['title']);
@@ -138,6 +141,12 @@ class ElibreDBDelegate extends DBDelegateA {
       $d = new Document($res[0]);
     }
     return $d;
+  }
+
+  public function savePageContent($page, $content) {
+//    $query = 'UPDATE ';
+    $dbm = $this->getDBM();
+    $res = $dbm->executeQuery($query);
   }
 
 }
