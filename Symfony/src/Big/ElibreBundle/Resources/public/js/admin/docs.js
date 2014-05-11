@@ -20,8 +20,13 @@ function openFileManager(e, target, fmURL) {
 //      overlay: false,
 //      eClose: 'closeBtn',
       complete: function() {
-        new FileManager().setTargetControl(target);
-        new FileManager().parentBox = this;
+//        new FileManager().setTargetControl(target);
+        new FileManager().onSelect = function (selectedValue) {
+//          alert('FM.onSelect');
+          target.val(selectedValue);
+          propouseNameFromFile(selectedValue);
+        }
+//        new FileManager().parentBox = this;
       }
     });
   }
@@ -34,4 +39,34 @@ function openFileManager(e, target, fmURL) {
 //  return;
 //  $.fn.custombox(sender, {
 
+}
+
+function propouseNameFromFile(fpath) {
+  var titleWidget = $('#form_title');
+  if (titleWidget && !titleWidget.val()) {
+    var title;
+    // get basename
+    var p = fpath.lastIndexOf('/', fpath.length - 1);
+    if (p >= 0) {
+      title = fpath.substring(p + 1);
+    }
+    else {
+      title = fpath;
+    }
+    // get rid of extension
+    p = title.lastIndexOf('.', title.length - 1);
+    if (p >= 0) {
+      title = title.substring(0, p);
+    }
+    titleWidget.val(title);
+  }
+}
+
+function deleteDocConfirm(targetURL, dlgWidget) {
+  var res = false;
+  //res = confirm('Are you sure to delete document?');
+  if (dlgWidget) {
+    dlgWidget.dialog('open');
+  }
+  return res;
 }

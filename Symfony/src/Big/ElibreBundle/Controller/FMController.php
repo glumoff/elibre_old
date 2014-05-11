@@ -18,15 +18,15 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class FMController extends Controller {
 
-  var $rootDir = "/mnt/hd/work/www/elibre_data/upload/";
+  var $rootDir = "";
 
   public function indexAction($action) {
-
+    $this->rootDir = $this->container->getParameter('big_elibre.uploadDir');
 //    $response = new Response();
     $request = $this->getRequest();
     $path = $request->query->get('path');
     if (!$path) {
-      $path = '/';
+      $path = DIRECTORY_SEPARATOR;
     }
 
     switch ($action) {
@@ -72,7 +72,10 @@ class FMController extends Controller {
   public function getRootRelativePath($path) {
     $res = $path;
     if (substr($path, 0, strlen($this->rootDir)) == $this->rootDir) {
-      $res = substr($path, strlen($this->rootDir) + 1);
+      $res = substr($path, strlen($this->rootDir));
+      if ($res[0] == DIRECTORY_SEPARATOR) {
+        $res = substr($res, 1);
+      }
     }
     return $res;
   }
@@ -85,6 +88,10 @@ class FMController extends Controller {
     /* @var $curFile UploadedFile */
     foreach ($request->files as $curFile) {
       $name = $curFile->getClientOriginalName();
+      if (strtolower(substr(PHP_OS, 0, 3)) === 'win') {
+        $name = mb_convert_encoding($name, "windows-1251", "utf-8");
+      }
+
       $str .= "PATH=" . $path;
       $f = $curFile->move($this->rootDir . $path, $name);
     }

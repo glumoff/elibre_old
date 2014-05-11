@@ -303,6 +303,17 @@ ul.themesList li {
   height: 48px;
 }
 
+.delete {
+  position: absolute;
+  right: 30px;
+  top: 5px;
+  margin: 2px;
+}
+
+.delete img {
+  height: 16px;
+}
+
 .docAnnotationHeader {
   /*background-color: #fafafa;*/
   min-height: 50px;
@@ -430,8 +441,10 @@ p.tooltip {
 .modalWindow {
   background-color: white;
   border-radius: 3px;
-  min-width: 500px;
-  min-height: 300px;
+  width: 500px;
+  height: 300px;
+  -moz-transform: none;
+  transform: none;
   /*height: 300px;*/
 }
 
@@ -468,4 +481,19 @@ p.tooltip {
 form table td {
   padding: 3px;
   vertical-align: top;
+}
+
+
+/*.themeTitle .addDocBtn {
+  width: 30px;
+  border-radius: 3px;
+  position: absolute;
+}*/
+
+
+.addDocModal {
+/*   position: absolute; */
+/*   top: 100px; */
+/*   border: 5px solid red; */
+  /*background-color: red;*/
 }

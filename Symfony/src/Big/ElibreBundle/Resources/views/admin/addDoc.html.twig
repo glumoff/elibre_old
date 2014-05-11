@@ -2,7 +2,6 @@
 
 {% block additional_scripts %}
 {#<script src="{{ asset('bundles/bigelibre/js/admin/docs.js') }}"></script>#}
-{#<script src="{{ asset('bundles/bigelibre/js/admin/docs.js') }}"></script>#}
 {% endblock %}
 
 
@@ -28,19 +27,15 @@
   <div class="modalWindowContent">
 {{ form_start(addDocForm) }}
   {{ form_errors(addDocForm) }}
-
+    {{ form_widget(addDocForm.id) }}
     <table>
       <tr>
-        <td>ID:</td>
-        <td>{{ form_widget(addDocForm.id) }}</td>
+        <td>Path:</td>
+        <td>{{ form_widget(addDocForm.path) }} <a id="openFMBtn" href="#">Choose...</a></td>
       </tr>
       <tr>
         <td>Title:</td>
         <td>{{ form_widget(addDocForm.title) }}</td>
-      </tr>
-      <tr>
-        <td>Path:</td>
-        <td>{{ form_widget(addDocForm.path) }} <a id="openFMBtn" href="#">Choose...</a></td>
       </tr>
       <tr>
         <td>Annotation:</td>
@@ -49,6 +44,10 @@
       <tr>
         <td>Tags:</td>
         <td>{{ form_widget(addDocForm.tags) }}</td>
+      </tr>
+      <tr>
+        <td>Theme:</td>
+        <td>{{ form_widget(addDocForm.theme_id) }} {{ theme.title }}</td>
       </tr>
     </table>
 

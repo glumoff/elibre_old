@@ -148,8 +148,33 @@ class ElibreDBDelegate extends DBDelegateA {
     $dbm = $this->getDBM();
     $res = $dbm->executeQuery($query);
   }
+  
+ /**
+   * 
+   * @param integer $theme_id
+   */
+  private function getThemeFullDirName($theme_id, $dbm = NULL) {
+//    $dbm = $thi
+//    s->getDoctrine()->getManager();
+    $path = '';
+
+    do {
+      /* @var $theme Theme */
+      $theme = $dbm->getRepository("BigElibreBundle:Theme")->find($theme_id);
+      if (!$theme) {
+        break;
+      }
+      $path = '/' . $theme->getDirName() . $path;
+      $theme_id = $theme->getParentId();
+    } while ($theme_id > 0);
+
+    return $path;
+  }
+
 
 }
+
+
 
 class ElibreDBConnection {
 

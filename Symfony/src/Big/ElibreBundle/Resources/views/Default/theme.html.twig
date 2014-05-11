@@ -2,6 +2,7 @@
 
 {% block content %}
   {% if is_granted('ROLE_ADMIN') %}
+{#<link href="{{ asset('bundles/bigelibre/css/reset.css') }}" rel="stylesheet" />#}
 <link href="{{ asset('bundles/bigelibre/css/fm.css') }}" rel="stylesheet" />
 <link href="{{ asset('bundles/bigelibre/css/uploadfile.css') }}" rel="stylesheet">
 <script src="{{ asset('bundles/bigelibre/js/jquery.uploadfile.min.js') }}"></script>
@@ -50,14 +51,66 @@
         alert(i + '=' + obj[i]);
       }      
 #}
-    $('.addDocBtn a').on('click', function(e) {
-      $.fn.custombox(this, {
-        effect: 'fadein',
-        zIndex: 5000,
-        customClass: 'addDocModal',
+      $('.ui-autocomplete').css({
+{#        fon#}
       });
-      e.preventDefault();
-    });
+
+      $('.addDocBtn a').on('click', function(e) {
+        $.fn.custombox(this, {
+          effect: 'fadein',
+          zIndex: 5000,
+          customClass: 'addDocModal',
+        });
+        e.preventDefault();
+      });
+
+      var deleteDocDlgName = "#delete-confirm";
+      
+      $.widget( "custom.confirmDialog", $.ui.dialog, {
+        open: function(docID) {
+          //for (var i in docID) {
+            //alert(i + '=' + docID[i]);
+          //}
+          this.option("docID", docID.getAttribute('href'));          
+          // Invoke the parent widget's open().
+          return this._super();
+        }
+      });
+
+      $(deleteDocDlgName).confirmDialog({
+        resizable: false,
+        width: 500,
+        height: 140,
+        modal: true,
+        autoOpen: false,
+        //docID: -1,
+        buttons: {
+          "Delete all": function() {
+            var url = Routing.generate('big_elibre_admin', {'mode': 'docs',  'action' : 'del', 'doc': $(this).confirmDialog("option", "docID")});
+            window.location.href = url;
+            $(this).confirmDialog("close");
+          },
+          "Delete, but leave files": function() {
+            var url = Routing.generate('big_elibre_admin', {'mode': 'docs',  'action' : 'del', 'doc': $(this).confirmDialog("option", "docID"), 'leave': 1 });
+            window.location.href = url;
+            $(this).confirmDialog("close");
+          },
+          "Cancel": function() {
+            $(this).confirmDialog("close");
+          }
+        }
+      });
+
+      $('a.delete').on('click', function(e) {
+        e.preventDefault();
+        //if ($(deleteDocDlgName).dialog) {
+        $(deleteDocDlgName).confirmDialog('open', this);
+        //}
+{#        else {
+          //var url = this;
+        }#}
+        //deleteDocConfirm(this, $(deleteDocDlgName)));
+      });
 
     });
   </script>
@@ -66,7 +119,18 @@
 </div>
   {% endif %}
 
-<h3 class="themeTitle">Тема: {{ selectedTheme.getTitle() }}</h3>
+<h3 class="themeTitle">Тема: {{ selectedTheme.getTitle() }}
+{#{% if is_granted('ROLE_ADMIN') %}
+  <div class="addDocBtn">
+    <a href="{{ path('big_elibre_admin', {'mode': 'docs', 'action': 'add', 'theme': selectedTheme.code}) }}" title="{% trans from "messages" %}Add document to this theme{% endtrans %}">
+      {% trans from "messages" %}Add{% endtrans %}
+    </a>
+  </div>
+{% endif %}
+#}
+</h3>
+
+
 
 <ul class="themesList">
   {% for cur_theme in subthemes %}
@@ -86,10 +150,20 @@
                             {{ attribute(doc, 'title') }}
     </a>
     <a class="download" href="{{ path('big_elibre_doc', {'doc_id': doc.id,  'action' : 'download' }) }}" title="Скачать документ"><img src="{{ asset('bundles/bigelibre/images/icons/') }}{{ doc.icon }}"></a>
+    {% if is_granted('ROLE_ADMIN') %}
+    <a class="delete" href="{{ doc.id }}" title="Удалить документ"><img src="{{ asset('bundles/bigelibre/images/admin/delete-2.png') }}"></a>
+    {% endif %}
   </li>
   {% else %}
   нет документов
   {% endfor %}
 </ul>
+
+  {% if is_granted('ROLE_ADMIN') %}
+    <div id="delete-confirm" title="Delete this document?">
+      <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>This document will be permanently deleted from library and cannot be recovered.</p><p>Are you sure?</p>
+    </div>
+  {% endif %}
+
 
 {% endblock %}

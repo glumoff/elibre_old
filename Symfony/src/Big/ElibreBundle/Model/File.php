@@ -2,6 +2,8 @@
 
 namespace Big\ElibreBundle\Model;
 
+use Big\ElibreBundle\Utils\FSHelper;
+
 /**
  * Description of File
  *
@@ -12,6 +14,11 @@ class File {
   private $fpath;
 
   public function __construct($fpath = NULL) {
+
+    if ($fpath) {
+      $fpath = FSHelper::fixOSFileName($fpath, TRUE);
+    }
+
     $this->setFilePath($fpath);
   }
 
@@ -25,9 +32,13 @@ class File {
   }
 
   public function getFileName() {
-    return basename($this->fpath);
+//    return basename('' . $this->fpath);
+    $a = explode(DIRECTORY_SEPARATOR, $this->fpath);
+//    $str = end($a);
+    return end($a);
+//    return $str;
   }
-  
+
   public function getType() {
     return 'file';
   }
@@ -40,5 +51,5 @@ class File {
     );
 //    return (array) $this;
   }
-  
+
 }

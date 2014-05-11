@@ -38,7 +38,10 @@ function FileManager() {
   };
 
   this.refreshFileList = function() {
-    var url = 'http://172.18.1.12:8080/app_dev.php/fm/getlist';
+    //var url = 'http://172.18.1.12:8080/app_dev.php/fm/getlist';
+//    var url = Routing.generate('big_elibre_fm_actions', { action: 'getlist' });
+    var url = Routing.generate('big_elibre_fm_actions', { action: 'getlist' });
+//    alert(url);
 //    var thisFM = this;
     $.ajax({
       type: "GET",
@@ -70,16 +73,22 @@ function FileManager() {
           }
         }
         $('.FMFileList li.file a').on('click', function(e) {
-          var target = new FileManager().targetControl;
-          target.val($(this).attr('href'));
+          if (jQuery.isFunction(new FileManager().onSelect)) {
+            new FileManager().onSelect($(this).attr('href'));
+          }
           $.fn.custombox('close');
+//          var target = new FileManager().targetControl;
+//          if (target) {
+//            target.val($(this).attr('href'));
+//            $.fn.custombox('close');
+//          }
 //          alert(new FileManager().parentBox);
-          if (new FileManager().parentBox) {
+//          if (new FileManager().parentBox) {
 //            new FileManager().parentBox._close();
 //            for (var i in new FileManager().parentBox) {
 //              alert(i +' = ' + new FileManager().parentBox[i]);
 //            }
-          }
+//          }
           e.preventDefault();
         });
         $('.FMFileList li.dir a').on('click', function(e) {
@@ -103,8 +112,11 @@ function FileManager() {
     var p = this.currentPath.lastIndexOf('/', this.currentPath.length - 2); // -2 to cut / at the end
     if (p >= 0) {
       newPath = this.currentPath.substring(0, p) + '/';
-      this.changeDir(newPath);
+      //alert(newPath);
+    } else {
+      newPath = '/';
     }
+    this.changeDir(newPath);
   };
   this.uploadDialog = function() {
     alert('uploadDialog');
@@ -125,9 +137,11 @@ function FileManager() {
       }
     }
   };
-  this.targetControl = '';
-  this.parentBox = '';
-  this.setTargetControl = function(target) {
-    this.targetControl = target;
-  }
+//  this.targetControl = '';
+//  this.parentBox = '';
+//  this.setTargetControl = function(target) {
+//    this.targetControl = target;
+//  };
+
+  this.onSelect; // callback function
 }

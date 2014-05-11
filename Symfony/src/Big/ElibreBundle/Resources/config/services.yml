@@ -1,7 +1,5 @@
 parameters:
-#    big_elibre.example.class: Big\ElibreBundle\Example
+     big_elibre.rootDir: /mnt/hd/work/www/elibre_data/
+     big_elibre.uploadDir: /mnt/hd/work/www/elibre_data/upload/
 
 services:
-#    big_elibre.example:
-#        class: %big_elibre.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]

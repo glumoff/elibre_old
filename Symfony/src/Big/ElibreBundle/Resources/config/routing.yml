@@ -1,3 +1,7 @@
+big_elibre_test:
+    pattern: /adm/test
+    defaults: { _controller: BigElibreBundle:Test:index }
+
 big_elibre_theme:
     pattern:  /theme/{theme_code}/{action}
     defaults: { _controller: BigElibreBundle:Theme:showTheme, action: view }
@@ -24,6 +28,8 @@ register:
 big_elibre_admin:
     pattern: /admin/{mode}/{action}
     defaults: { _controller: BigElibreBundle:Admin:index, mode: board, action: view }
+    options:
+        expose: true
     #requirements:
         #action: view|edit|save
         
@@ -31,6 +37,8 @@ big_elibre_admin:
 big_elibre_fm_actions:
     pattern: /fm/{action}
     defaults: { _controller: BigElibreBundle:FM:index, action: none }
+    options:
+        expose: true
 
 big_elibre_page:
     pattern:  /{_locale}/{page}/{action}
@@ -44,3 +52,4 @@ big_elibre_page:
 big_elibre_cache:
     pattern: /adm/cache/{action}
     defaults: { _controller: BigElibreBundle:Cache:index }
+

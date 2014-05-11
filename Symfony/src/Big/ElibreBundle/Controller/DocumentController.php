@@ -9,18 +9,19 @@ namespace Big\ElibreBundle\Controller;
  */
 use Big\ElibreBundle\db\ElibreDBDelegate;
 use Symfony\Component\HttpFoundation\Response;
+use Big\ElibreBundle\Utils\FSHelper;
 
 class DocumentController extends DefaultController {
 
   //TODO: move it to parameters
-  private $docs_path = '/mnt/hd/work/www/elibre_data/';
-
+  private $docs_path = '';
 
   public function showDocAction($action) {
+    $this->docs_path = $this->container->getParameter('big_elibre.rootDir');
     //action: view|download|edit
     switch ($action) {
       case 'download':
-        $this->doDownloadFile();
+        return $this->doDownloadFile();
         break;
 
       default:
@@ -56,26 +57,30 @@ class DocumentController extends DefaultController {
   protected function doDownloadFile() {
 //    return 
 //    return;    
+//          $response = new Response("");
+      
+//      return $response;
     $doc = $this->getSelectedDoc();
     if ($doc) {
-      $fname = $this->docs_path . $doc->getPath();
-      if (file_exists($fname) && !is_dir($fname)) {
+      $themePath = $this->getThemeFullDirName($doc->getThemeId());
+      $fname = $this->docs_path . DIRECTORY_SEPARATOR . $themePath . DIRECTORY_SEPARATOR . $doc->getPath();
+      $fname_enc = FSHelper::fixOSFileName($fname);
+      
+      if (file_exists($fname_enc) && !is_dir($fname_enc)) {
         $response = new Response();
         // Set headers
         $response->headers->set('Cache-Control', 'private');
-        $response->headers->set('Content-type', mime_content_type($fname));
-        $response->headers->set('Content-Disposition', 'attachment; filename="' . basename($fname) . '"');
-        $response->headers->set('Content-length', filesize($fname));
+        $response->headers->set('Content-type', mime_content_type($fname_enc));
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . FSHelper::getBaseName($fname) . '"');
+        $response->headers->set('Content-length', filesize($fname_enc));
         // Send headers before outputting anything
         $response->sendHeaders();
-        $response->setContent(readfile($fname));
+        $response->setContent(readfile($fname_enc));
         return $response;
-      }
-      else {
+      } else {
         throw $this->createNotFoundException('The document does not exist');
       }
-    }
-    else {
+    } else {
       throw $this->createNotFoundException('The document does not selected');
     }
   }
@@ -87,6 +92,27 @@ class DocumentController extends DefaultController {
     $selectedDocID = $request->attributes->get('doc_id', 'not set');
     $doc = $db->getDocument($selectedDocID);
     return $doc;
+  }
+
+  /**
+   * 
+   * @param integer $theme_id
+   */
+  private function getThemeFullDirName($theme_id) {
+    $dbm = $this->getDoctrine()->getManager();
+    $path = '';
+
+    do {
+      /* @var $theme Theme */
+      $theme = $dbm->getRepository("BigElibreBundle:Theme")->find($theme_id);
+      if (!$theme) {
+        break;
+      }
+      $path = DIRECTORY_SEPARATOR . $theme->getDirName() . $path;
+      $theme_id = $theme->getParentId();
+    } while ($theme_id > 0);
+
+    return $path;
   }
 
 }

@@ -253,11 +253,11 @@
                         };
 
                     // IE8 not supported: translateY(-50%).
-                    if ( obj._isIE() ) {
+//                    if ( obj._isIE() ) {
                         var offh = modal.offsetHeight;
                         position['margin-top'] = - offh / 2 + 'px';
                         position['height'] = offh + 'px';
-                    }
+//                    }
 
                     // If position top?
                     if ( obj.settings.position !== null && obj.settings.position.indexOf('top') !== -1 ) {
@@ -438,7 +438,11 @@
                         }
                     }
                 };
-                xhr.open('GET', obj.settings.url + ( !obj.settings.cache ? '?_=' + new Date().getTime() : '' ), true);
+                var glueForGET = '?';
+                if (obj.settings.url && (obj.settings.url.indexOf("?") !== -1 )) {
+                  glueForGET = '&';
+                }
+                xhr.open('GET', obj.settings.url + ( !obj.settings.cache ? glueForGET +  '_=' + new Date().getTime() : '' ), true);
                 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
                 xhr.send(null);
             }

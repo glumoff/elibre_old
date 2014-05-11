@@ -10,12 +10,17 @@ namespace Big\ElibreBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Big\ElibreBundle\Entity\Theme;
 use Big\ElibreBundle\Entity\Document;
+use Big\ElibreBundle\Utils\FSHelper;
 
 class AdminController extends Controller {
 
-  var $rootDir = "/mnt/hd/work/www/elibre_data";
+  var $rootDir = "";
+  var $uploadDir = "";
 
   public function indexAction($mode, $action) {
+    $this->rootDir = $this->container->getParameter('big_elibre.rootDir');
+    $this->uploadDir = $this->container->getParameter('big_elibre.uploadDir');
+
 //    $str = "<pre>";
     switch ($mode) {
       case 'themes':
@@ -54,9 +59,9 @@ class AdminController extends Controller {
           } elseif ($action == 'save') {
 //            $str = "<pre>before handleRequest: " . var_export($theme, TRUE) . "\n";
             $parentPath = $this->rootDir . $this->getThemeFullDirName($theme->getParentId());
-            $oldDirName = $parentPath . '/' . $theme->getDirName();
+            $oldDirName = $parentPath . DIRECTORY_SEPARATOR . $theme->getDirName();
             $form->handleRequest($request);
-            $newDirName = $parentPath . '/' . $theme->getDirName();
+            $newDirName = $parentPath . DIRECTORY_SEPARATOR . $theme->getDirName();
 
             $this->updateThemeDir($oldDirName, $newDirName);
 
@@ -101,25 +106,36 @@ class AdminController extends Controller {
         $dbm = $this->getDoctrine()->getManager();
         $formArr = $request->request->get('form');
         $docID = $formArr["id"] ? $formArr["id"] : $request->query->get('doc');
-//          $str .= "themeID: " . var_export($request->request, TRUE) . "\n";
-//          $str .= "themeID: " . var_export($themeID, TRUE) . "\n";
+
         if ($docID) {
-          $doc = $dbm->getRepository("BigElibreBundle:Theme")->find($docID);
-//            $str .= "found in DB: " . var_export($theme, TRUE) . "\n";
+          $doc = $dbm->getRepository("BigElibreBundle:Document")->find($docID);
         } else {
           $doc = new Document();
-          $doc->setTitle('New document');
+//          $doc->setTitle('New document');
+          $themeCode = $request->query->get('theme');
+//          return new \Symfony\Component\HttpFoundation\Response("request: " . var_export($_SERVER, TRUE));
+          //exit();
+
+          $theme = $dbm->getRepository("BigElibreBundle:Theme")->findOneByCode($themeCode);
+//          return new \Symfony\Component\HttpFoundation\Response("theme: " . var_export($theme, TRUE));
+          if ($theme) {
+            $doc->setThemeId($theme->getId());
+          }
         }
+//          $str = "before handleSaveDoc: " . var_export($docID, TRUE) . "\n";
+//          echo $str;
 
         /* @var $form \Symfony\Component\Form\Form */
         $form = $this->createFormBuilder($doc)
                 ->setAction($this->generateUrl('big_elibre_admin', array('mode' => $mode,
-                            'action' => 'add')))
-                ->add('id', 'text')
+                            'action' => 'save')))
+                ->add('id', 'hidden')
+                ->add('theme_id', 'text')
                 ->add('title', 'text')
                 ->add('path', 'text')
                 ->add('annotation', 'textarea', array('required' => FALSE))
                 ->add('tags', 'text')
+                ->add('theme_id', 'hidden')
 //                  ->add('show_order', 'hidden')
                 ->add('save', 'submit')
                 ->getForm();
@@ -128,10 +144,16 @@ class AdminController extends Controller {
           $response = $this->render('BigElibreBundle:admin:addDoc.html.twig', array(
               'themesJSON' => $this->getThemesJSON(),
               'isAjax' => $request->isXmlHttpRequest(),
+              'theme' => $theme,
               'addDocForm' => $form->createView()
 //            'isAjax' => FALSE
                   )
           );
+        } elseif ($action == 'save') {
+          return $this->handleSaveDoc($form, $doc);
+        } elseif ($action == 'del') {
+          $leaveFiles = $formArr["leave"] ? $formArr["leave"] : $request->query->get('leave');
+          return $this->deleteDoc($doc, $leaveFiles);
         } else {
           $response = $this->render('BigElibreBundle:admin:index.html.twig', array('content' => $mode));
         }
@@ -223,7 +245,7 @@ class AdminController extends Controller {
         if ($theme) {
           $oldParentPath = $this->rootDir . $this->getThemeFullDirName($oldParentID);
           $newParentPath = $this->rootDir . $this->getThemeFullDirName($newParentID);
-          $this->updateThemeDir($oldParentPath . '/' . $theme->getDirName(), $newParentPath . '/' . $theme->getDirName());
+          $this->updateThemeDir($oldParentPath . DIRECTORY_SEPARATOR . $theme->getDirName(), $newParentPath . DIRECTORY_SEPARATOR . $theme->getDirName());
         }
       }
       $dbm->flush();
@@ -244,6 +266,10 @@ class AdminController extends Controller {
 //    $parentPath = dirname($newFullPath);
 //    $oldFullPath = $parentPath . $oldDirName;
 //    $newFullPath = $parentPath . $newDirName;
+
+    $oldDirName = FSHelper::fixOSFileName($oldDirName);
+    $newDirName = FSHelper::fixOSFileName($newDirName);
+
     if (!is_dir($oldDirName)) {
       if (!is_dir($newDirName)) {
         mkdir($newDirName, 0775, TRUE);
@@ -254,7 +280,9 @@ class AdminController extends Controller {
         if (!is_dir($parentDir)) {
           mkdir($parentDir, 0775, TRUE);
         }
-        rename($oldDirName, $newDirName);
+        if ($oldDirName != $newDirName) {
+          rename($oldDirName, $newDirName);
+        }
       } else {
         // todo: exeption here 
       }
@@ -278,11 +306,107 @@ class AdminController extends Controller {
       if (!$theme) {
         break;
       }
-      $path = '/' . $theme->getDirName() . $path;
+      $path = DIRECTORY_SEPARATOR . $theme->getDirName() . $path;
       $theme_id = $theme->getParentId();
     } while ($theme_id > 0);
 
     return $path;
+  }
+
+  /**
+   * 
+   * @param type $form
+   * @param Document $doc
+   * @return \Symfony\Component\HttpFoundation\Response
+   */
+  protected function handleSaveDoc($form, $doc) {
+    $request = $this->getRequest();
+
+//    $str = "<pre>";
+//    $str .= "before handleRequest: " . var_export($doc, TRUE) . "\n";
+//    $str .= "before handleRequest: " . var_export($doc->getCreateDt(), TRUE) . "\n";
+    $form->handleRequest($request);
+//    $str .= "after handleRequest: " . var_export($doc, TRUE) . "\n";
+
+    if ($doc->getCreateDt()) {
+      $doc->setCreateDt(new \DateTime());
+    }
+    //if ($doc->getEditDt()) {
+    $doc->setEditDt(new \DateTime());
+    //}
+//    //$this->updateThemeDir($oldDirName, $newDirName);
+////            if ($form->isValid()) {
+    // move file from upload dir to theme dir
+    $moved = FALSE;
+
+//    $str = '<pre>';
+//    $str .= $doc->getPath()."\n";
+    if ($doc->getPath()) {
+      $uploadedDocPath = $this->uploadDir . DIRECTORY_SEPARATOR . $doc->getPath();
+      $themePath = $this->rootDir . $this->getThemeFullDirName($doc->getThemeId());
+      $themeDocPath = $themePath . DIRECTORY_SEPARATOR . FSHelper::getBaseName($doc->getPath());
+      $this->updateThemeDir($themePath, $themePath);
+//      $str .= $uploadedDocPath . " - ";
+//      $str .= var_export(file_exists($uploadedDocPath), TRUE) . "\n";
+      $uploadedDocPath_enc = FSHelper::fixOSFileName($uploadedDocPath);
+      $themePath_enc = FSHelper::fixOSFileName($themePath);
+      $themeDocPath_enc = FSHelper::fixOSFileName($themeDocPath);
+      if (file_exists($uploadedDocPath_enc) && file_exists($themePath_enc)) {
+//        $str .= "Both path are exist\n";
+        $moved = rename($uploadedDocPath_enc, $themeDocPath_enc);
+      }
+//      $str .= $themePath . " - ";
+//      $str .= var_export(file_exists($themePath), TRUE) . "\n";
+//      $str .= $themeDocPath . "\n";
+//      $str .= "move uploaded = " . var_export($moved, TRUE) . "\n";
+    }
+
+    $dbm = $this->getDoctrine()->getManager();
+    if ($moved) {
+      $doc->setPath(FSHelper::getBaseName($themeDocPath));
+      $res = $dbm->persist($doc);
+      $dbm->flush();
+    }
+    $theme = $dbm->getRepository("BigElibreBundle:Theme")->findOneById($doc->getThemeId());
+    $themeCode = $theme->getCode();
+
+
+//    $response = new \Symfony\Component\HttpFoundation\Response($str);
+    return $this->redirect($this->generateUrl('big_elibre_theme', array('theme_code' => $themeCode)));
+//    return $response;
+  }
+
+  protected function deleteDoc($doc, $leaveFiles = FALSE) {
+    if ($doc && $doc->getID()) {
+      $dbm = $this->getDoctrine()->getManager();
+      $theme = $dbm->getRepository("BigElibreBundle:Theme")->findOneById($doc->getThemeId());
+      $themeCode = $theme->getCode();
+
+      // remove from FS
+      $res = FALSE;
+      if (!$leaveFiles) {
+        if ($doc->getPath()) {
+          $themePath = $this->rootDir . $this->getThemeFullDirName($doc->getThemeId());
+          $themeDocPath = $themePath . DIRECTORY_SEPARATOR . $doc->getPath();
+
+          $themeDocPath_enc = FSHelper::fixOSFileName($themeDocPath);
+          if (file_exists($themeDocPath_enc)) {
+            $res = unlink($themeDocPath_enc);
+          } else {
+            $res = TRUE;
+          }
+        }
+      }
+
+      if ($res | $leaveFiles) {
+        // remove from DB
+        $dbm->persist($doc);
+        $dbm->remove($doc);
+        $dbm->flush();
+      }
+
+      return $this->redirect($this->generateUrl('big_elibre_theme', array('theme_code' => $themeCode)));
+    }
   }
 
 }
