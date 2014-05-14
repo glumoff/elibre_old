@@ -40,6 +40,13 @@ big_elibre_fm_actions:
     options:
         expose: true
 
+# Search
+big_elibre_search:
+    pattern: /search
+    defaults: { _controller: BigElibreBundle:Search:index }
+    options:
+        expose: true
+
 big_elibre_page:
     pattern:  /{_locale}/{page}/{action}
     defaults: { _controller: BigElibreBundle:Page:index, page: home, action: view, _locale: ru }
