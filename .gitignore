@@ -2,3 +2,5 @@
 /nbproject/
 /Symfony/app/cache/dev/
 /Symfony/app/cache/prod/
+/Symfony/web/file.pdf
+/Symfony/web/elibre.tar.gz
