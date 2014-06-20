@@ -4,3 +4,6 @@
 /Symfony/app/cache/prod/
 /Symfony/web/file.pdf
 /Symfony/web/elibre.tar.gz
+/Symfony/app/cache/
+/Symfony/app/logs/
+/Symfony/web/bundles/
