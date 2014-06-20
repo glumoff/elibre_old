@@ -6,9 +6,10 @@ parameters:
     database_name: elibre
     database_user: elibre
     database_password: MoisBeag
-    mailer_transport: smtp
-    mailer_host: 127.0.0.1
-    mailer_user: null
-    mailer_password: null
+    mailer_transport: gmail
+    mailer_host: null
+    mailer_user: mcpplib@gmail.com
+    mailer_from_name: MCPP Libary
+    mailer_password: dotLeito
     locale: en
     secret: 54385601fe80e91d6f03f0af3d92af1242bb2c3d

@@ -386,11 +386,15 @@ p.tooltip {
   text-align: right;
 }
 
-.errorMessage {
+.error, .errorMessage {
   text-align: center;
   color: red;
   margin-bottom: 15px;
   margin-top: 15px;
+}
+
+.error ul, .errorMessage ul {
+  list-style: none;
 }
 
 .toolBox {

@@ -29,8 +29,7 @@ class SecurityController extends DefaultController {
     $session = $request->getSession();
     if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
       $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
-    }
-    else {
+    } else {
       $error = $session->get(SecurityContext::AUTHENTICATION_ERROR);
       $session->remove(SecurityContext::AUTHENTICATION_ERROR);
     }
@@ -40,8 +39,9 @@ class SecurityController extends DefaultController {
     if (is_a($error, 'Exception')) {
       $error_msg = $error->getMessageKey();
     }
-  
+
     $this->templateParams['last_username'] = $session->get(SecurityContext::LAST_USERNAME);
+//    $this->templateParams['csrf_token'] = $this->container->get('form.csrf_provider')->generateCsrfToken('authenticate');
     $this->templateParams['error_msg'] = $this->get('translator')->trans($error_msg, array(), 'security');
 
     return $this->templateParams;

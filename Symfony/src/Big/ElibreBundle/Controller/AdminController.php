@@ -9,8 +9,10 @@ namespace Big\ElibreBundle\Controller;
  */
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Big\ElibreBundle\Entity\Theme;
+use Big\ElibreBundle\Entity\User;
 use Big\ElibreBundle\Entity\Document;
 use Big\ElibreBundle\Utils\FSHelper;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AdminController extends Controller {
 
@@ -21,6 +23,7 @@ class AdminController extends Controller {
     $this->rootDir = $this->container->getParameter('big_elibre.rootDir');
     $this->uploadDir = $this->container->getParameter('big_elibre.uploadDir');
 
+    $request = $this->getRequest();
 //    $str = "<pre>";
     switch ($mode) {
       case 'themes':
@@ -156,6 +159,89 @@ class AdminController extends Controller {
           return $this->deleteDoc($doc, $leaveFiles);
         } else {
           $response = $this->render('BigElibreBundle:admin:index.html.twig', array('content' => $mode));
+        }
+        break;
+
+      case 'user':
+        $um = $this->container->get('fos_user.user_manager');
+        if ($action == 'list') {
+          $dbm = $this->getDoctrine()->getManager();
+          $users = $dbm->getRepository("BigElibreBundle:User")->findAll();
+          $response = new JsonResponse($this->usersToJTable($users));
+        } elseif (($action == 'create') || ($action == 'update')) {
+          $isNewUser = (!$request->get('UserId'));
+          $newIsEnabled = $request->get('isEnabled', FALSE);
+          $sendNotify = $request->get('sendMail', FALSE);
+          $newUsername = $request->get('Name');
+          $newPassword = $request->get('Password');
+          if ($newIsEnabled) {
+            $actionMessage = 'register.account_activated';
+          } else {
+            $actionMessage = 'register.account_deactivated';
+          }
+          if (!$isNewUser) {
+            $oldUser = $um->findUserBy(array('id' => $request->get('UserId')));
+            if ($oldUser && ($newIsEnabled == $oldUser->isEnabled())) {
+              $sendNotify = FALSE;
+            }
+          }
+
+          try {
+            if ($isNewUser) {
+              $editUser = $um->createUser();
+            } else {
+              $editUser = $um->findUserBy(array('id' => $request->get('UserId')));
+              if (!$editUser) {
+                throw new \Exception('User not found');
+              }
+            }
+
+            $res = array();
+            $editUser->setUsername($request->get('Name'));
+            $editUser->setEmail($request->get('Email'));
+            $password = $request->get('Password');
+            if ($password) {
+              $editUser->setPlainPassword($password);
+            }
+            $editUser->setEnabled($request->get('isEnabled', FALSE));
+
+            if ($isNewUser) {
+              if ($um->findUserByUsername($editUser->getUsername())) {
+                throw new \Exception('Username already exists');
+              }
+              if ($um->findUserByEmail($editUser->getEmail())) {
+                throw new \Exception('Email already used');
+              }
+            }
+            if ($request->get('Password') != $request->get('PasswordRetype')) {
+              throw new \Exception('Passwords mismatch');
+            }
+            $um->updateUser($editUser);
+
+            $res['Result'] = "OK";
+            $res['Record'] = array('UserId' => $editUser->getId(),
+                'Name' => $editUser->getUsername(),
+                'Email' => $editUser->getEmail(),
+                'isEnabled' => $editUser->isEnabled());
+
+            if ($sendNotify) {
+              $this->sendNotifyUser($editUser, $actionMessage);
+            }
+          } catch (\Exception $exc) {
+            $res['Result'] = "ERROR";
+            $res['Message'] = $exc->getMessage();
+          }
+          $response = new JsonResponse($res);
+        } elseif ($action == 'delete') {
+          $res = array();
+          $editUser = $um->findUserBy(array('id' => $request->get('UserId')));
+          if ($editUser) {
+            $um->deleteUser($editUser);
+            $res['Result'] = "OK";
+          }
+          $response = new JsonResponse($res);
+        } else {
+          $response = $this->render('BigElibreBundle:admin:users.html.twig', array());
         }
         break;
 
@@ -406,6 +492,42 @@ class AdminController extends Controller {
       }
 
       return $this->redirect($this->generateUrl('big_elibre_theme', array('theme_code' => $themeCode)));
+    }
+  }
+
+  protected function usersToJTable($users) {
+    //return '{Result:"OK",Records:[{id:1,username:"panikovsky",email:"glumoff@gmail.com",enabled:true}]}';
+
+    $users_arr = array();
+    if (is_array($users)) {
+      /* @var $user \Big\ElibreBundle\Entity\User */
+      foreach ($users as $user) {
+        $users_arr[] = array('UserId' => $user->getId(),
+            'Name' => $user->getUsername(),
+            'Email' => $user->getEmail(),
+            'isEnabled' => $user->isEnabled(),
+        );
+      }
+    }
+
+    $res = array();
+    $res['Result'] = "OK";
+    $res['Records'] = $users_arr;
+//    return json_encode($res);
+    return $res;
+  }
+
+  public function sendNotifyUser($user, $msgText) {
+//    $this->get('translator')->trans('Symfony2 is great');
+    if ($user && $user->getEmail()) {
+      $translator = $this->get('translator');
+      $from = array($this->container->getParameter('mailer_user') => $this->container->getParameter('mailer_from_name'));
+      $message = \Swift_Message::newInstance()
+              ->setSubject($translator->trans('register.account_changed'))
+              ->setFrom($from)
+              ->setTo($user->getEmail())
+              ->setBody($translator->trans($msgText));
+      $this->get('mailer')->send($message);
     }
   }
 

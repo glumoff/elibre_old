@@ -14,16 +14,21 @@ big_elibre_doc:
     requirements:
         action: view|download|edit
 
-login:
-    pattern:  /login
-    defaults: { _controller: BigElibreBundle:Security:login }
-    
-login_check:
-    pattern:  /login_check
 
-register:
-    pattern:  /register
-    defaults: { _controller: BigElibreBundle:Security:register }
+register_wait_approvement:
+    pattern: register/wait-approvement
+    defaults: { _controller: BigElibreBundle:Register:waitApprovement }
+
+#login:
+#    pattern:  /login
+#    defaults: { _controller: BigElibreBundle:Security:login }
+#    
+#login_check:
+#    pattern:  /login_check
+#
+#register:
+#    pattern:  /register
+#    defaults: { _controller: BigElibreBundle:Security:register }
     
 big_elibre_admin:
     pattern: /admin/{mode}/{action}

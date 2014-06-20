@@ -7,37 +7,41 @@
     </title>
     <meta name="keywords" content="" />
     <meta name="description" content="" />
+    <link href="{{ asset('bundles/bigelibre/css/elibre/jquery-ui-1.10.3.custom.css') }}" rel="stylesheet" />    
     <link href="{{ asset('bundles/bigelibre/css/admin/admin.css') }}" rel="stylesheet" />
     <script src="{{ asset('bundles/bigelibre/js/jquery-1.9.1.js') }}"></script>
-{#    <script src="{{ asset('bundles/bigelibre/js/jquery-ui-1.10.3.custom.min.js') }}"></script>#}
+    <script src="{{ asset('bundles/bigelibre/js/jquery-ui-1.10.3.custom.min.js') }}"></script>
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+
     {% block additional_scripts %}
     {% endblock %}
   </head>
 
   <body>
     {% block header %}
-    <div class="header">
-      <h1>Admin console <a href="{{ path('big_elibre_page') }}">Электронной библиотеки</a></h1>
-    </div><!-- .header-->
+      <div class="header">
+        <h1>Admin console <a href="{{ path('big_elibre_page') }}">Электронной библиотеки</a></h1>
+      </div><!-- .header-->
     {% endblock %}
 
     <div class="middle">
 
       <div class="container">
         <div class="content">
-        {% block content %}
-          {{ content|raw }}
-        {% endblock %}
+          {% block content %}
+            {{ content|raw }}
+          {% endblock %}
         </div><!-- .content-->
       </div><!-- .container-->
-      
-      
+
+
       {% block menu %}
-      <div class="left-sidebar">
-        <a href="{{ path('big_elibre_admin', {'mode': 'themes'}) }}">Themes</a><br>
-        <a href="{{ path('big_elibre_admin', {'mode': 'docs'}) }}">Documents</a><br>
-        <a href="{{ path('big_elibre_admin', {'mode': 'user'}) }}">Users</a><br>
-      </div><!-- .left-sidebar -->
+        <div class="left-sidebar">
+          <a href="{{ path('big_elibre_admin', {'mode': 'themes'}) }}">Themes</a><br>
+{#          <a href="{{ path('big_elibre_admin', {'mode': 'docs'}) }}">Documents</a><br>#}
+          <a href="{{ path('big_elibre_admin', {'mode': 'user'}) }}">Users</a><br>
+        </div><!-- .left-sidebar -->
       {% endblock %}
 
     </div><!-- .middle-->

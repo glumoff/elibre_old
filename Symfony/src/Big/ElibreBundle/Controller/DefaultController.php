@@ -22,7 +22,9 @@ class DefaultController extends Controller {
   }
 
   protected function getTemplateParams() {
+    //var_dump($this->get('translator')->getLocale());
     $this->get('translator')->setLocale($this->getRequest()->getPreferredLanguage());
+    //var_dump($this->get('translator')->getLocale());
 
     if ($this->templateParams === NULL) {
       $this->templateParams = array();

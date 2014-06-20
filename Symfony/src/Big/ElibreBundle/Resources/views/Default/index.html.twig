@@ -21,7 +21,7 @@
       <div id="header">
         <div id="headerTitle"><a href="{{ path('big_elibre_page') }}">Электронная<br>библиотека</a></div>
         <div id="headerLinks" class="fulljustify">
-          <a href="{{ path('big_elibre_page') }}">Главная</a> | <a href="{{ path('login') }}">Вход</a> | <a href="{{ path('big_elibre_search') }}">Поиск</a> | <a href="{{ path('big_elibre_page', {'page': 'contacts'}) }}">Контакты</a>
+          <a href="{{ path('big_elibre_page') }}">Главная</a> | <a href="{{ path('fos_user_security_login') }}">Вход</a> | <a href="{{ path('big_elibre_search') }}">Поиск</a> | <a href="{{ path('big_elibre_page', {'page': 'contacts'}) }}">Контакты</a>
 
           {% if is_granted('ROLE_ADMIN') %}
           | <a href="{{ path('big_elibre_admin') }}">Админ</a>
