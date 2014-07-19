@@ -48,6 +48,10 @@ E-mail: %email%
                 <source>register.account_deactivated</source>
                 <target>Ваша учётная запись выключена</target>
             </trans-unit>
+            <trans-unit id="11">
+                <source>theme.goto</source>
+                <target>Перейти к теме</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

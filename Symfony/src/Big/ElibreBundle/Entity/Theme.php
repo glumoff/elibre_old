@@ -259,4 +259,14 @@ class Theme {
     return $this->dirName;
   }
   
+
+    /**
+     * Get isActive
+     *
+     * @return boolean 
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
 }

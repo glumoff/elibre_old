@@ -52,13 +52,25 @@ big_elibre_search:
     options:
         expose: true
 
+big_elibre_new_docs:
+    pattern:  /new_docs
+    defaults: { _controller: BigElibreBundle:Search:newDocs }
+
+big_elibre_fav:
+    pattern:  /fav/{action}
+    defaults: { _controller: BigElibreBundle:UserPages:favorites, action: view }
+  
+big_elibre_history:
+    pattern:  /history
+    defaults: { _controller: BigElibreBundle:UserPages:history }
+  
+        
 big_elibre_page:
     pattern:  /{_locale}/{page}/{action}
     defaults: { _controller: BigElibreBundle:Page:index, page: home, action: view, _locale: ru }
     requirements:
         action: view|edit|save
         #_locale: en|ru|uk
-
 
         
 big_elibre_cache:

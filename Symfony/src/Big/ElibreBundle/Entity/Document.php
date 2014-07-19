@@ -60,6 +60,10 @@ class Document {
    */
   private $tags;
   private $fileType;
+
+  /**
+   * @ORM\Column(name="mimetype", type="string", length=100, nullable=TRUE)
+   */
   private $mimeType;
 
   /**
@@ -69,9 +73,10 @@ class Document {
   private $icon;
 
   /**
-   * @ORM\Column(name="theme_id", type="integer")
+   * @ORM\ManyToOne(targetEntity="Theme")
+   * @ORM\JoinColumn(name="theme_id", referencedColumnName="id")
    */
-  private $theme_id;
+  private $theme;
 
   /**
    *
@@ -117,11 +122,22 @@ class Document {
   }
 
   public function getMimeType() {
-    if (!isset($this->mimeType)) {
-      
-    }
     return $this->mimeType;
   }
+
+  public function setMimeType($mtype) {
+    $this->mimeType = $mtype;
+    return $this;
+  }
+
+//  public function getMimeType() {
+//    if (!isset($this->mimeType)) {
+//      $finfo = finfo_open(FILEINFO_MIME_TYPE);
+//      $this->mimeType = finfo_file($finfo, $this->path);
+//      finfo_close($finfo);
+//    }
+//    return $this->mimeType;
+//  }
 
   public function getFileType() {
     if (!isset($this->fileType)) {
@@ -245,25 +261,49 @@ class Document {
     return $this->tags;
   }
 
-  /**
-   * Set theme_id
-   *
-   * @param integer $themeId
-   * @return Document
-   */
-  public function setThemeId($themeId) {
-    $this->theme_id = $themeId;
+//  /**
+//   * Set theme_id
+//   *
+//   * @param integer $themeId
+//   * @return Document
+//   */
+//  public function setThemeId($themeId) {
+//    $this->theme_id = $themeId;
+//
+//    return $this;
+//  }
+//
+//  /**
+//   * Get theme_id
+//   *
+//   * @return integer 
+//   */
+//  public function getThemeId() {
+//    return $this->theme_id;
+//  }
+//
 
-    return $this;
-  }
 
-  /**
-   * Get theme_id
-   *
-   * @return integer 
-   */
-  public function getThemeId() {
-    return $this->theme_id;
-  }
+    /**
+     * Set theme
+     *
+     * @param \Big\ElibreBundle\Entity\Theme $theme
+     * @return Document
+     */
+    public function setTheme(\Big\ElibreBundle\Entity\Theme $theme = null)
+    {
+        $this->theme = $theme;
+    
+        return $this;
+    }
 
+    /**
+     * Get theme
+     *
+     * @return \Big\ElibreBundle\Entity\Theme 
+     */
+    public function getTheme()
+    {
+        return $this->theme;
+    }
 }

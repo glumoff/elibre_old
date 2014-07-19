@@ -118,6 +118,21 @@ div.docTitle {
   color: #080808;
 }
 
+#rightLinks {
+  position: absolute;
+  right: 3px;
+  top: 75px;
+  width: 59px;
+  /*border: 1px dashed red;
+  background-color: green;*/
+  z-index: 1000;
+  text-align: center;
+}
+
+#rightLinks a {
+  color: white;
+}
+
 /* Middle
 -----------------------------------------------------------------------------*/
 #middle {
@@ -233,15 +248,18 @@ h2.ui-accordion-header > a {
 }
 
 ul.docList {
-  /*list-style-type: decimal-leading-zero;*/
-  /*list-style-position: inside;*/
-  /*list-style-position: inside;*/
+  /*  list-style-type: decimal-leading-zero;
+    list-style-position: inside;*/
   /*margin-left: 10px;*/
   /*border-top: 1px solid grey;*/
   /*border-bottom: 1px solid grey;*/
   clear: both;
   /*float: none;*/
   /*margin-right: 0;*/
+}
+
+ul.searchResults.docList {
+  list-style-type: none;
 }
 
 ul.docList li {
@@ -330,6 +348,21 @@ ul.themesList li {
   /*background-color: #fafafa;*/
   min-height: 50px;
   text-align: justify;
+}
+
+.docDate {
+  font-size: smaller;
+  font-style: italic;
+}
+
+div.docDate {
+  display: inline;
+  margin-right: 10px;
+  margin-left: 5px;
+}
+
+ul.searchResults.docList {
+  list-style-type: none;
 }
 
 p:before {
@@ -496,8 +529,12 @@ form table td {
 
 
 .addDocModal {
-/*   position: absolute; */
-/*   top: 100px; */
-/*   border: 5px solid red; */
+  /*   position: absolute; */
+  /*   top: 100px; */
+  /*   border: 5px solid red; */
   /*background-color: red;*/
+}
+
+.nowrap {
+  white-space: nowrap;
 }

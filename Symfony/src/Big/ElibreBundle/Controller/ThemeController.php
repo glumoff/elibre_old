@@ -30,7 +30,7 @@ class ThemeController extends DefaultController {
     $wholeThemesTree = $db->getThemes();
     $themePath = $wholeThemesTree->getThemePath($selectedThemeCode);
     //$activeThemeRoot = $themePath
-//    echo "<pre>" . var_dump($themePath, TRUE) . "+</pre>";
+//    echo "<pre>" . var_export($themePath, TRUE) . "+</pre>";
 
     $subthemesList = $db->getSubThemes($selectedThemeCode);
     $documentsList = $db->getDocuments($selectedTheme->getID());
@@ -41,7 +41,8 @@ class ThemeController extends DefaultController {
     $this->templateParams['activeThemeRoot2'] = (count($themePath) > 1) ? $themePath[max(count($themePath) - 2, 0)]->getID() : $selectedTheme->getID();
     $this->templateParams['subthemes'] = $subthemesList->getThemesArray();
     $this->templateParams['documents'] = $documentsList->getDocsArray();
-
+//    var_dump($this->templateParams['activeThemeRoot']);
+//    var_dump($this->templateParams['activeThemeRoot2']);
     return $this->templateParams;
   }
 

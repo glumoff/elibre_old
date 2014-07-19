@@ -47,6 +47,10 @@
                 <source>register.account_deactivated</source>
                 <target>Your account was deactivated</target>
             </trans-unit>
+            <trans-unit id="11">
+                <source>theme.goto</source>
+                <target>Go to theme</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

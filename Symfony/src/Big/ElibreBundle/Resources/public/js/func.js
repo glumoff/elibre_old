@@ -26,3 +26,13 @@ if(!Array.prototype.last) {
         return this[this.length - 1];
     };
 }
+
+function getCurrentPath(inclTrailingSlash) {
+  var scriptName = $('script').last().attr('src');
+  var path = '';
+  if (scriptName) {
+    var p = scriptName.lastIndexOf("/");
+    path = scriptName.substring(0, p);
+  }
+  return inclTrailingSlash ? path + "/" : path;
+}

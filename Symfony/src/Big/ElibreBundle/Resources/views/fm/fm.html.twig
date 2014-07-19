@@ -12,7 +12,7 @@ $(function() {
   //var FM = new FileManager();
   new FileManager().init();
 
-  
+{#  console.log(new FileManager().currentPath);#}
 
   $("#fileuploader").uploadFile({
     url: Routing.generate('big_elibre_fm_actions', { action: 'upload' }),

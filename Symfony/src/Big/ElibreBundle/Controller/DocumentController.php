@@ -36,12 +36,17 @@ class DocumentController extends DefaultController {
 
       $doc = $this->getSelectedDoc();
       if ($doc) {
-        $db = new ElibreDBDelegate();
 //        echo __CLASS__ . '.' . __FUNCTION__ . ' #' . __LINE__ . ": i was here<br>";
-        $selectedTheme = $db->getTheme($doc->getThemeID());
+//        $selectedTheme = $db->getTheme($doc->getTheme()->getId());
+        $selectedTheme = $doc->getTheme();
+//        var_dump($selectedTheme->getCode());
         if ($selectedTheme) {
+          $db = new ElibreDBDelegate();
           $wholeThemesTree = $db->getThemes();
           $themePath = $wholeThemesTree->getThemePath($selectedTheme->getCode());
+//          echo "<pre>";
+//          var_export($themePath);
+//          echo "</pre>";
         }
       }
 
@@ -49,6 +54,9 @@ class DocumentController extends DefaultController {
       $this->templateParams['selectedTheme'] = $selectedTheme;
       if ($themePath) {
         $this->templateParams['activeThemeRoot'] = (count($themePath) > 0) ? $themePath[max(count($themePath) - 1, 0)]->getID() : '-1';
+        $this->templateParams['activeThemeRoot2'] = (count($themePath) > 1) ? $themePath[max(count($themePath) - 2, 0)]->getID() : $selectedTheme->getID();
+//        var_dump($this->templateParams['activeThemeRoot']);
+//        var_dump($this->templateParams['activeThemeRoot2']);
       }
     }
     return $this->templateParams;
@@ -58,14 +66,13 @@ class DocumentController extends DefaultController {
 //    return 
 //    return;    
 //          $response = new Response("");
-      
 //      return $response;
     $doc = $this->getSelectedDoc();
     if ($doc) {
-      $themePath = $this->getThemeFullDirName($doc->getThemeId());
+      $themePath = $this->getThemeFullDirName($doc->getTheme()->getId());
       $fname = $this->docs_path . DIRECTORY_SEPARATOR . $themePath . DIRECTORY_SEPARATOR . $doc->getPath();
       $fname_enc = FSHelper::fixOSFileName($fname);
-      
+
       if (file_exists($fname_enc) && !is_dir($fname_enc)) {
         $response = new Response();
         // Set headers
@@ -87,10 +94,14 @@ class DocumentController extends DefaultController {
 
   private function getSelectedDoc() {
     $request = $this->getRequest();
-    $db = new ElibreDBDelegate();
+
+    $dbm = $this->getDoctrine()->getManager();
+
+//    $db = new ElibreDBDelegate();
     // TODO: make escaping of params
     $selectedDocID = $request->attributes->get('doc_id', 'not set');
-    $doc = $db->getDocument($selectedDocID);
+//    $doc = $db->getDocument($selectedDocID);
+    $doc = $dbm->getRepository("BigElibreBundle:Document")->findOneById($selectedDocID);
     return $doc;
   }
 

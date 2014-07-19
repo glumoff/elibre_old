@@ -121,8 +121,9 @@ class AdminController extends Controller {
 
           $theme = $dbm->getRepository("BigElibreBundle:Theme")->findOneByCode($themeCode);
 //          return new \Symfony\Component\HttpFoundation\Response("theme: " . var_export($theme, TRUE));
+//          var_dump($themeCode);
           if ($theme) {
-            $doc->setThemeId($theme->getId());
+            $doc->setTheme($theme);
           }
         }
 //          $str = "before handleSaveDoc: " . var_export($docID, TRUE) . "\n";
@@ -133,12 +134,13 @@ class AdminController extends Controller {
                 ->setAction($this->generateUrl('big_elibre_admin', array('mode' => $mode,
                             'action' => 'save')))
                 ->add('id', 'hidden')
-                ->add('theme_id', 'text')
+//                ->add('theme', 'text')
+                ->add('theme', new \Big\ElibreBundle\Form\ThemeType())
                 ->add('title', 'text')
                 ->add('path', 'text')
                 ->add('annotation', 'textarea', array('required' => FALSE))
                 ->add('tags', 'text')
-                ->add('theme_id', 'hidden')
+//                ->add('theme', 'hidden')
 //                  ->add('show_order', 'hidden')
                 ->add('save', 'submit')
                 ->getForm();
@@ -408,12 +410,19 @@ class AdminController extends Controller {
   protected function handleSaveDoc($form, $doc) {
     $request = $this->getRequest();
 
+    $dbm = $this->getDoctrine()->getManager();
 //    $str = "<pre>";
 //    $str .= "before handleRequest: " . var_export($doc, TRUE) . "\n";
 //    $str .= "before handleRequest: " . var_export($doc->getCreateDt(), TRUE) . "\n";
     $form->handleRequest($request);
 //    $str .= "after handleRequest: " . var_export($doc, TRUE) . "\n";
 
+    if (!$doc->getTheme() || !$doc->getTheme()->getCode()) {
+      $theme = $dbm->getRepository("BigElibreBundle:Theme")->findOneById($doc->getTheme()->getId());
+      $doc->setTheme($theme);
+//      exit;
+    }
+    
     if ($doc->getCreateDt()) {
       $doc->setCreateDt(new \DateTime());
     }
@@ -429,7 +438,7 @@ class AdminController extends Controller {
 //    $str .= $doc->getPath()."\n";
     if ($doc->getPath()) {
       $uploadedDocPath = $this->uploadDir . DIRECTORY_SEPARATOR . $doc->getPath();
-      $themePath = $this->rootDir . $this->getThemeFullDirName($doc->getThemeId());
+      $themePath = $this->rootDir . $this->getThemeFullDirName($doc->getTheme()->getId());
       $themeDocPath = $themePath . DIRECTORY_SEPARATOR . FSHelper::getBaseName($doc->getPath());
       $this->updateThemeDir($themePath, $themePath);
 //      $str .= $uploadedDocPath . " - ";
@@ -447,13 +456,22 @@ class AdminController extends Controller {
 //      $str .= "move uploaded = " . var_export($moved, TRUE) . "\n";
     }
 
-    $dbm = $this->getDoctrine()->getManager();
     if ($moved) {
       $doc->setPath(FSHelper::getBaseName($themeDocPath));
-      $res = $dbm->persist($doc);
+
+      $finfo = finfo_open(FILEINFO_MIME_TYPE);
+      $doc->setMimeType(finfo_file($finfo, $themeDocPath_enc));
+      finfo_close($finfo);
+
+      //$res = 
+      $dbm->persist($doc->getTheme());
+      $dbm->persist($doc);
       $dbm->flush();
     }
-    $theme = $dbm->getRepository("BigElibreBundle:Theme")->findOneById($doc->getThemeId());
+//    $theme = $dbm->getRepository("BigElibreBundle:Theme")->findOneById($doc->getThemeId());
+    $theme = $doc->getTheme();
+//    var_dump($theme->getCode());
+//    exit;
     $themeCode = $theme->getCode();
 
 
@@ -465,14 +483,15 @@ class AdminController extends Controller {
   protected function deleteDoc($doc, $leaveFiles = FALSE) {
     if ($doc && $doc->getID()) {
       $dbm = $this->getDoctrine()->getManager();
-      $theme = $dbm->getRepository("BigElibreBundle:Theme")->findOneById($doc->getThemeId());
+//      $theme = $dbm->getRepository("BigElibreBundle:Theme")->findOneById($doc->getThemeId());
+      $theme = $doc->getTheme();
       $themeCode = $theme->getCode();
 
       // remove from FS
       $res = FALSE;
       if (!$leaveFiles) {
         if ($doc->getPath()) {
-          $themePath = $this->rootDir . $this->getThemeFullDirName($doc->getThemeId());
+          $themePath = $this->rootDir . $this->getThemeFullDirName($doc->getTheme()->getId());
           $themeDocPath = $themePath . DIRECTORY_SEPARATOR . $doc->getPath();
 
           $themeDocPath_enc = FSHelper::fixOSFileName($themeDocPath);
