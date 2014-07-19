@@ -19,7 +19,7 @@ security:
             memory:
                 users:
                     #user:  { password: userpass, roles: [ 'ROLE_USER' ] }
-                    admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
+                    #admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
 #        user_db:
 #            entity: { class: Big\ElibreBundle\Entity\User, property: username }
         fos_user_db:
